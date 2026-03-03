@@ -48,4 +48,3 @@ services:
     envVars:
       - key: BACKEND_URL
         sync: false          # set to https://bestie-backend.onrender.com
-    plan: free
