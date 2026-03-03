@@ -1,22 +1,16 @@
 """
-Memory Service — persistent conversation history via SQLite.
-History survives container restarts and page refreshes.
-The DB file lives at /app/data/chat_history.db (mounted as a Docker volume).
-
-Uses a single shared SQLAlchemy engine with check_same_thread=False so
-the sync get_session_history() can be called from LangChain's thread pool
-without SQLite complaints.
+Memory Service — persistent conversation history.
+Uses PostgreSQL (via DATABASE_URL env var) in production on Render,
+falls back to local SQLite for development.
 """
 
+import os
 import threading
 from pathlib import Path
 
 from sqlalchemy import create_engine
 from langchain_community.chat_message_histories import SQLChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
-
-DB_DIR = Path("/app/data")
-DB_PATH = DB_DIR / "chat_history.db"
 
 _store: dict[str, SQLChatMessageHistory] = {}
 _lock = threading.Lock()
@@ -26,11 +20,18 @@ _engine = None
 def _get_engine():
     global _engine
     if _engine is None:
-        DB_DIR.mkdir(parents=True, exist_ok=True)
-        _engine = create_engine(
-            f"sqlite:///{DB_PATH}",
-            connect_args={"check_same_thread": False},
-        )
+        database_url = os.environ.get("DATABASE_URL")
+        if database_url:
+            # Supabase/PostgreSQL in production
+            _engine = create_engine(database_url)
+        else:
+            # Local SQLite fallback for development
+            db_dir = Path("/app/data")
+            db_dir.mkdir(parents=True, exist_ok=True)
+            _engine = create_engine(
+                f"sqlite:///{db_dir / 'chat_history.db'}",
+                connect_args={"check_same_thread": False},
+            )
     return _engine
 
 
