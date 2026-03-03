@@ -1,0 +1,29 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# SQLite database (chat history)
+*.db
+*.sqlite3
+data/
+
+# Node / React
+node_modules/
+build/
+.npm/
+
+# IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+*.log
