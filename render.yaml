@@ -17,10 +17,7 @@ services:
         value: "1024"
       - key: ACCESS_PASSWORD
         sync: false          # set this manually in Render dashboard
-    disk:
-      name: chat-data
-      mountPath: /app/data
-      sizeGB: 1
+    plan: free
 
   # ── Frontend (React static site) ──────────────────────────────────────────
   - type: web
@@ -51,3 +48,4 @@ services:
     envVars:
       - key: BACKEND_URL
         sync: false          # set to https://bestie-backend.onrender.com
+    plan: free
