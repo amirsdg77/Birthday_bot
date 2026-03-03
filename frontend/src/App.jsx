@@ -173,7 +173,7 @@ function Chat({ sessionId }) {
       <div className="chat-header">
         <img src={avatar} alt="bestie" className="avatar" />
         <div className="info">
-          <h2>your bestie 💕</h2>
+          <h2>starberry 🍓</h2>
           <span>always here for you</span>
         </div>
         <div className="header-actions">
