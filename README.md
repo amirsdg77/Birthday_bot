@@ -78,6 +78,33 @@ curl http://localhost:8000/health
 
 ---
 
+## Deploying to Render
+
+The repo includes a `render.yaml` that sets up everything automatically.
+
+### Steps
+
+1. Push the project to a GitHub repo
+2. Go to [render.com](https://render.com) → New → Blueprint → connect your repo
+3. Render will detect `render.yaml` and create all three services automatically
+4. Set the following environment variables manually in the Render dashboard (marked `sync: false`):
+
+| Service | Variable | Value |
+|---|---|---|
+| bestie-backend | `GOOGLE_API_KEY` | your Google API key |
+| bestie-backend | `ACCESS_PASSWORD` | the password you want |
+| bestie-frontend | `REACT_APP_API_URL` | `https://bestie-backend.onrender.com` |
+| bestie-keepalive | `BACKEND_URL` | `https://bestie-backend.onrender.com` |
+
+5. Click **Deploy** — done!
+
+### What gets created
+- **bestie-backend** — FastAPI web service with a 1GB persistent disk for SQLite
+- **bestie-frontend** — React static site
+- **bestie-keepalive** — Cron job that pings `/health` every 10 minutes to keep the backend warm
+
+---
+
 ## After Birthday Testing
 
 Remember to change `BIRTHDAY_DAY` back to `5` in [backend/services/prompt_service.py](backend/services/prompt_service.py#L24).
