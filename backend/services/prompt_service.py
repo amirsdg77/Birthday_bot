@@ -18,7 +18,7 @@ PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
 
 # TODO: Change this to Orgese's timezone if needed
 # Full list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-TIMEZONE = ZoneInfo("Europe/Istanbul")
+TIMEZONE = ZoneInfo("Europe/Belgrade")
 
 BIRTHDAY_MONTH = 3
 BIRTHDAY_DAY = 5
