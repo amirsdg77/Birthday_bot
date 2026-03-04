@@ -5,17 +5,16 @@ import avatar from "./avatar.jpg";
 import BirthdayEffects from "./BirthdayEffects";
 import "./App.css";
 
-// Fixed session ID — stored in localStorage so it survives page refreshes
-const STORAGE_KEY = "bestie_session_id";
-const AUTH_KEY = "bestie_authed";
-
-function getOrCreateSessionId() {
-  let sid = localStorage.getItem(STORAGE_KEY);
-  if (!sid) {
-    sid = uuidv4();
-    localStorage.setItem(STORAGE_KEY, sid);
-  }
-  return sid;
+/**
+ * Derives a stable session ID from the password using SHA-256.
+ * All devices that enter the same password share the same session → same history.
+ */
+async function sessionIdFromPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode("bestie:" + password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 // ─── Lock Screen ────────────────────────────────────────────────────────────
@@ -32,8 +31,8 @@ function LockScreen({ onUnlock }) {
     try {
       const ok = await verifyPassword(password);
       if (ok) {
-        localStorage.setItem(AUTH_KEY, "1");
-        onUnlock();
+        const sid = await sessionIdFromPassword(password);
+        onUnlock(sid);
       } else {
         setError("Wrong password 🔒 Try again!");
       }
@@ -230,17 +229,20 @@ function Chat({ sessionId, onBirthday }) {
 // ─── Root ────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // Check localStorage so she stays logged in after page refresh
-  const [authed, setAuthed] = useState(() => localStorage.getItem(AUTH_KEY) === "1");
-  const [sessionId] = useState(getOrCreateSessionId);
+  // Always start at the lock screen — session ID comes from the password
+  const [sessionId, setSessionId] = useState(null);
   const [isBirthday, setIsBirthday] = useState(false);
+
+  const handleUnlock = (sid) => {
+    setSessionId(sid);
+  };
 
   return (
     <>
       {isBirthday && <BirthdayEffects />}
-      {authed
+      {sessionId
         ? <Chat sessionId={sessionId} onBirthday={() => setIsBirthday(true)} />
-        : <LockScreen onUnlock={() => setAuthed(true)} />}
+        : <LockScreen onUnlock={handleUnlock} />}
     </>
   );
 }
