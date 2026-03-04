@@ -52,7 +52,7 @@ export const streamMessage = (message, sessionId, { onChunk, onDone, onError }) 
 
 export const fetchGreeting = async () => {
   const res = await api.get("/greeting");
-  return res.data.message;
+  return { message: res.data.message, isBirthday: res.data.is_birthday };
 };
 
 export const clearSession = async (sessionId) => {

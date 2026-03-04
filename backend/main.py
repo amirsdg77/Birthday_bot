@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from app.config import settings
 from services.chat_service import chat, chat_stream, get_greeting
 from services.memory_service import clear_session, get_session_history
-from services.prompt_service import reload_prompts
+from services.prompt_service import reload_prompts, is_birthday
 
 app = FastAPI(title="Bestie Chatbot API")
 
@@ -47,6 +47,11 @@ class ChatResponse(BaseModel):
 
 class SimpleResponse(BaseModel):
     message: str
+
+
+class GreetingResponse(BaseModel):
+    message: str
+    is_birthday: bool
 
 
 class AuthRequest(BaseModel):
@@ -118,10 +123,10 @@ async def chat_stream_endpoint(message: str, session_id: str | None = None):
     )
 
 
-@app.get("/greeting", response_model=SimpleResponse)
+@app.get("/greeting", response_model=GreetingResponse)
 async def greeting_endpoint():
     try:
-        return SimpleResponse(message=await get_greeting())
+        return GreetingResponse(message=await get_greeting(), is_birthday=is_birthday())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

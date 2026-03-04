@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { streamMessage, fetchGreeting, clearSession, verifyPassword, fetchHistory } from "./api";
 import avatar from "./avatar.jpg";
+import BirthdayEffects from "./BirthdayEffects";
 import "./App.css";
 
 // Fixed session ID — stored in localStorage so it survives page refreshes
@@ -74,6 +75,7 @@ function Chat({ sessionId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isBirthday, setIsBirthday] = useState(false);
   const bottomRef = useRef(null);
   const abortRef = useRef(null);
 
@@ -94,8 +96,9 @@ function Chat({ sessionId }) {
           );
         } else {
           // First ever visit — show a greeting
-          const greeting = await fetchGreeting();
-          appendMessage("bot", greeting);
+          const { message, isBirthday: bday } = await fetchGreeting();
+          appendMessage("bot", message);
+          if (bday) setIsBirthday(true);
         }
       } catch {
         appendMessage("bot", "Hey bestie! 💕 So happy you're here!");
@@ -170,6 +173,7 @@ function Chat({ sessionId }) {
 
   return (
     <div className="chat-wrapper">
+      {isBirthday && <BirthdayEffects />}
       <div className="chat-header">
         <img src={avatar} alt="bestie" className="avatar" />
         <div className="info">
