@@ -178,9 +178,6 @@ function Chat({ sessionId, onBirthday }) {
           <h2>starberry 🍓</h2>
           <span>always here for you</span>
         </div>
-        <div className="header-actions">
-          <button className="icon-btn" title="Clear chat" onClick={handleClear}>🔄</button>
-        </div>
       </div>
 
       <div className="chat-messages">
