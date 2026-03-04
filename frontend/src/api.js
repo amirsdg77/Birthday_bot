@@ -50,8 +50,8 @@ export const streamMessage = (message, sessionId, { onChunk, onDone, onError }) 
   return () => { done = true; es.close(); };
 };
 
-export const fetchGreeting = async () => {
-  const res = await api.get("/greeting");
+export const fetchGreeting = async (sessionId) => {
+  const res = await api.get("/greeting", { params: { session_id: sessionId } });
   return { message: res.data.message, isBirthday: res.data.is_birthday };
 };
 

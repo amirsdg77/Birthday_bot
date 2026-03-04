@@ -124,9 +124,9 @@ async def chat_stream_endpoint(message: str, session_id: str | None = None):
 
 
 @app.get("/greeting", response_model=GreetingResponse)
-async def greeting_endpoint():
+async def greeting_endpoint(session_id: str):
     try:
-        return GreetingResponse(message=await get_greeting(), is_birthday=is_birthday())
+        return GreetingResponse(message=await get_greeting(session_id), is_birthday=is_birthday())
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

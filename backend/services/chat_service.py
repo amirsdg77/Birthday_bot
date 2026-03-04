@@ -57,9 +57,14 @@ async def chat_stream(user_message: str, session_id: str) -> AsyncIterator[str]:
     history.add_message(AIMessage(content="".join(full_reply)))
 
 
-async def get_greeting() -> str:
-    """Generates an opening greeting when bestie first opens the app."""
+async def get_greeting(session_id: str) -> str:
+    """Generates an opening greeting and saves it to the session history."""
     prompt = await get_greeting_prompt()
     chain = prompt | get_llm()
     response = await chain.ainvoke({})
+
+    # Persist the greeting so it survives a page refresh
+    history = get_session_history(session_id)
+    history.add_message(AIMessage(content=response.content))
+
     return response.content

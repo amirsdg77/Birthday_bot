@@ -95,7 +95,7 @@ function Chat({ sessionId, onBirthday }) {
           );
         } else {
           // First ever visit — show a greeting
-          const { message, isBirthday: bday } = await fetchGreeting();
+          const { message, isBirthday: bday } = await fetchGreeting(sessionId);
           appendMessage("bot", message);
           if (bday) onBirthday();
         }
