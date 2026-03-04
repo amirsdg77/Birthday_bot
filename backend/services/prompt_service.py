@@ -21,7 +21,7 @@ PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
 TIMEZONE = ZoneInfo("Europe/Istanbul")
 
 BIRTHDAY_MONTH = 3
-BIRTHDAY_DAY = 4
+BIRTHDAY_DAY = 5
 
 # In-memory cache: prompt name → raw string content
 _prompt_cache: dict[str, str] = {}
