@@ -194,7 +194,9 @@ function Chat({ sessionId }) {
                 ? msg.chunks.map((chunk, i) => (
                     <span key={i} className="token">{chunk}</span>
                   ))
-                : msg.text}
+                : msg.text?.split("\n").map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
               {isStreaming && msg.id === lastBotId && (
                 <span className="cursor" />
               )}
