@@ -71,11 +71,10 @@ function LockScreen({ onUnlock }) {
 
 // ─── Main Chat ───────────────────────────────────────────────────────────────
 
-function Chat({ sessionId }) {
+function Chat({ sessionId, onBirthday }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isBirthday, setIsBirthday] = useState(false);
   const bottomRef = useRef(null);
   const abortRef = useRef(null);
 
@@ -98,7 +97,7 @@ function Chat({ sessionId }) {
           // First ever visit — show a greeting
           const { message, isBirthday: bday } = await fetchGreeting();
           appendMessage("bot", message);
-          if (bday) setIsBirthday(true);
+          if (bday) onBirthday();
         }
       } catch {
         appendMessage("bot", "Hey bestie! 💕 So happy you're here!");
@@ -173,7 +172,6 @@ function Chat({ sessionId }) {
 
   return (
     <div className="chat-wrapper">
-      {isBirthday && <BirthdayEffects />}
       <div className="chat-header">
         <img src={avatar} alt="bestie" className="avatar" />
         <div className="info">
@@ -238,8 +236,14 @@ export default function App() {
   // Check localStorage so she stays logged in after page refresh
   const [authed, setAuthed] = useState(() => localStorage.getItem(AUTH_KEY) === "1");
   const [sessionId] = useState(getOrCreateSessionId);
+  const [isBirthday, setIsBirthday] = useState(false);
 
-  return authed
-    ? <Chat sessionId={sessionId} />
-    : <LockScreen onUnlock={() => setAuthed(true)} />;
+  return (
+    <>
+      {isBirthday && <BirthdayEffects />}
+      {authed
+        ? <Chat sessionId={sessionId} onBirthday={() => setIsBirthday(true)} />
+        : <LockScreen onUnlock={() => setAuthed(true)} />}
+    </>
+  );
 }
